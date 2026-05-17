@@ -6,7 +6,8 @@
       :class="{ active: activeItem === item }"
       @click="activeItem = item"
     >
-      {{ item }}
+      {{ item }} 
+      //could add icons here if needed, e.g. <i class="icon-home"></i>
     </a>
   </nav>
 </template>
