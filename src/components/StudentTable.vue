@@ -5,23 +5,29 @@
     </div>
     <table>
       <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>City</th><th>Action</th>
-        </tr>
+        <tr><th>ID</th><th>Name</th><th>City</th><th>Email</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <tr v-for="student in students" :key="student.id">
           <td>{{ student.id }}</td>
-          <td>{{ student.name }}</td>
+          <td>
+            <RouterLink :to="`/students/${student.id}`" class="name-link">
+              {{ student.name }}
+            </RouterLink>
+          </td>
           <td>{{ student.city }}</td>
-          <td><button class="del-btn" @click="$emit('delete-student', student.id)">Delete</button></td>
+          <td>{{ student.email || '—' }}</td>
+          <td class="actions-cell">
+            <RouterLink :to="`/students/${student.id}`" class="btn-view">View</RouterLink>
+            <button class="del-btn" @click="$emit('delete-student', student.id)">Delete</button>
+          </td>
         </tr>
         <tr v-if="students.length === 0">
-          <td colspan="4" class="empty-msg">No students yet. Click "+ Add Student" to begin.</td>
+          <td colspan="5" class="empty-msg">No students yet. Click "+ Add Student" to begin.</td>
         </tr>
       </tbody>
       <tfoot>
-        <tr><td colspan="4"># of students {{ students.length }}</td></tr>
+        <tr><td colspan="5"># of students: {{ students.length }}</td></tr>
       </tfoot>
     </table>
   </div>
@@ -43,11 +49,20 @@ defineEmits(['open-modal', 'delete-student'])
 .add-btn:hover { background: #1558b0; }
 table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #ccc; }
 thead tr { border-bottom: 2px solid #111; }
-th { padding: 14px 20px; text-align: center; font-weight: 700; font-size: 0.95rem; color: #111; }
+th { padding: 14px 16px; text-align: center; font-weight: 700; font-size: 0.95rem; color: #111; }
 tbody tr:nth-child(odd)  { background: #f0f0f0; }
 tbody tr:nth-child(even) { background: #fff; }
-td { padding: 12px 20px; text-align: center; font-size: 0.9rem; color: #333; }
+td { padding: 12px 16px; text-align: center; font-size: 0.9rem; color: #333; }
 tfoot td { padding: 14px 20px; font-weight: 700; text-align: center; border-top: 2px solid #111; font-size: 0.95rem; }
+.actions-cell { display: flex; gap: 6px; justify-content: center; align-items: center; }
+.name-link { color: #1a6ed8; font-weight: 600; text-decoration: none; }
+.name-link:hover { text-decoration: underline; }
+.btn-view {
+  background: #28a745; color: #fff; border: none;
+  padding: 5px 12px; border-radius: 3px; cursor: pointer;
+  font-size: 0.82rem; text-decoration: none; transition: background 0.2s;
+}
+.btn-view:hover { background: #1e7e34; }
 .del-btn {
   background: #e03c3c; color: #fff; border: none;
   padding: 5px 14px; border-radius: 3px; cursor: pointer; font-size: 0.82rem; transition: background 0.2s;

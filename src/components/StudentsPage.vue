@@ -9,7 +9,7 @@
       <StudentTable
         :students="students"
         @open-modal="showModal = true"
-        @delete-student="deleteStudent"
+        @delete-student="remove"
       />
     </main>
 
@@ -19,7 +19,7 @@
 
     <AddStudentModal
       :show="showModal"
-      @add="addStudent"
+      @add="add"
       @cancel="showModal = false"
     />
   </div>
@@ -30,47 +30,28 @@ import { ref } from 'vue'
 import SideNav         from './SideNav.vue'
 import StudentTable    from './StudentTable.vue'
 import AddStudentModal from './AddStudentModal.vue'
+import { useStudents } from '../composables/useStudents.js'
 
-const props = defineProps({
-  students: { type: Array, required: true }
-})
-const emit = defineEmits(['add-student', 'delete-student'])
-
+const { students, addStudent, deleteStudent } = useStudents()
 const showModal = ref(false)
 
-function addStudent(data) {
-  emit('add-student', data)
+function add(data) {
+  addStudent(data)
   showModal.value = false
 }
-function deleteStudent(id) {
-  emit('delete-student', id)
+function remove(id) {
+  deleteStudent(id)
 }
 </script>
 
 <style scoped>
 .page-wrapper { display: flex; flex-direction: column; min-height: calc(100vh - 56px); }
-
-.page-header {
-  background: #F5B800;
-  padding: 50px 20px;
-  text-align: center;
-}
+.page-header  { background: #F5B800; padding: 50px 20px; text-align: center; }
 .page-header h1 { font-size: 1.8rem; font-weight: 700; color: #1a1a1a; }
-
 .main-layout {
-  display: flex;
-  flex: 1;
-  padding: 24px;
-  gap: 20px;
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
+  display: flex; flex: 1; padding: 24px; gap: 20px;
+  max-width: 1100px; width: 100%; margin: 0 auto;
 }
-
-.page-footer {
-  background: #00C8E8;
-  padding: 30px 20px;
-  text-align: center;
-}
+.page-footer  { background: #00C8E8; padding: 30px 20px; text-align: center; }
 .page-footer p { font-weight: 700; color: #1a1a1a; font-size: 0.95rem; }
 </style>

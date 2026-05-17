@@ -4,26 +4,15 @@
       <div class="modal">
         <h2>Add New Student</h2>
 
-        <div class="form-group">
-          <label>Name</label>
+        <div class="form-group" v-for="field in fields" :key="field.key">
+          <label>{{ field.label }}<span v-if="field.required" class="req">*</span></label>
           <input
-            v-model="form.name"
-            :class="{ error: errors.name }"
-            placeholder="Enter student name"
-            @input="errors.name = ''"
+            v-model="form[field.key]"
+            :class="{ error: errors[field.key] }"
+            :placeholder="field.placeholder"
+            @input="errors[field.key] = ''"
           />
-          <span class="err-msg" v-if="errors.name">{{ errors.name }}</span>
-        </div>
-
-        <div class="form-group">
-          <label>City</label>
-          <input
-            v-model="form.city"
-            :class="{ error: errors.city }"
-            placeholder="Enter city"
-            @input="errors.city = ''"
-          />
-          <span class="err-msg" v-if="errors.city">{{ errors.city }}</span>
+          <span class="err-msg" v-if="errors[field.key]">{{ errors[field.key] }}</span>
         </div>
 
         <div class="modal-actions">
@@ -38,27 +27,33 @@
 <script setup>
 import { reactive, watch } from 'vue'
 
-const props = defineProps({
-  show: { type: Boolean, required: true }
-})
-const emit = defineEmits(['add', 'cancel'])
+const props = defineProps({ show: { type: Boolean, required: true } })
+const emit  = defineEmits(['add', 'cancel'])
 
-const form = reactive({ name: '', city: '' })
+const fields = [
+  { key: 'name',  label: 'Name',  placeholder: 'Enter student name', required: true },
+  { key: 'city',  label: 'City',  placeholder: 'Enter city',          required: true },
+  { key: 'email', label: 'Email', placeholder: 'Enter email (optional)' },
+  { key: 'phone', label: 'Phone', placeholder: 'Enter phone (optional)' },
+]
+
+const form   = reactive({ name: '', city: '', email: '', phone: '' })
 const errors = reactive({ name: '', city: '' })
 
-watch(() => props.show, (val) => {
+watch(() => props.show, val => {
   if (val) {
-    form.name = ''; form.city = ''
-    errors.name = ''; errors.city = ''
+    Object.assign(form,   { name: '', city: '', email: '', phone: '' })
+    Object.assign(errors, { name: '', city: '' })
   }
 })
 
 function submit() {
+  errors.name = ''; errors.city = ''
   let valid = true
   if (!form.name.trim()) { errors.name = 'Name is required.'; valid = false }
   if (!form.city.trim()) { errors.city = 'City is required.'; valid = false }
   if (!valid) return
-  emit('add', { name: form.name.trim(), city: form.city.trim() })
+  emit('add', { name: form.name.trim(), city: form.city.trim(), email: form.email.trim(), phone: form.phone.trim() })
 }
 </script>
 
@@ -71,12 +66,13 @@ function submit() {
 }
 .modal {
   background: #fff; border-radius: 8px;
-  padding: 32px 28px; width: 360px;
+  padding: 32px 28px; width: 380px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
 .modal h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 22px; color: #111; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #333; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #333; }
+.req { color: #e03c3c; margin-left: 2px; }
 .form-group input {
   width: 100%; padding: 9px 12px;
   border: 1px solid #ccc; border-radius: 4px;
@@ -90,7 +86,7 @@ function submit() {
   flex: 1; padding: 10px; border: none; border-radius: 4px;
   font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
 }
-.btn-add { background: #1a6ed8; color: #fff; }
+.btn-add    { background: #1a6ed8; color: #fff; }
 .btn-add:hover { background: #1558b0; }
 .btn-cancel { background: #e0e0e0; color: #333; }
 .btn-cancel:hover { background: #c8c8c8; }

@@ -6,7 +6,7 @@
     <SuccessPopup
       :show="showPopup"
       :data="formData"
-      @view-students="$emit('go-students')"
+      @view-students="router.push('/students')"
       @create-new="resetForm"
     />
   </div>
@@ -14,13 +14,16 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import StepOne      from './StepOne.vue'
 import StepTwo      from './StepTwo.vue'
 import SuccessPopup from './SuccessPopup.vue'
+import { useStudents } from '../composables/useStudents.js'
 
-const emit = defineEmits(['submitted', 'go-students'])
+const router = useRouter()
+const { addStudent } = useStudents()
 
-const step     = ref(1)
+const step      = ref(1)
 const showPopup = ref(false)
 
 const formData = reactive({
@@ -29,7 +32,12 @@ const formData = reactive({
 })
 
 function handleSubmit() {
-  emit('submitted', { ...formData })
+  addStudent({
+    name:  formData.title    || 'Untitled',
+    city:  formData.category || 'N/A',
+    email: '',
+    phone: '',
+  })
   showPopup.value = true
 }
 
